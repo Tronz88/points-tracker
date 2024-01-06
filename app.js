@@ -1,3 +1,4 @@
+// Your existing Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBJQlRGzbmDGIpME7NLSJlYXC3YJoi7XOU",
     authDomain: "points-tracker-8f9ef.firebaseapp.com",
@@ -6,9 +7,10 @@ const firebaseConfig = {
     messagingSenderId: "282673682706",
     appId: "1:282673682706:web:b0474e083de87099e6bbcb",
     measurementId: "G-862FHL7Z3G"
-  };
+};
 
-  firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
 let peopleData = [];
 
@@ -44,7 +46,7 @@ function increasePoints(name) {
     const person = peopleData.find(p => p.name === name);
     if (person) {
         person.points += 1;
-        saveData();
+        saveData(peopleData);
         render();
     }
 }
@@ -53,7 +55,7 @@ function decreasePoints(name) {
     const person = peopleData.find(p => p.name === name);
     if (person && person.points > 0) {
         person.points -= 1;
-        saveData();
+        saveData(peopleData);
         render();
     }
 }
@@ -63,11 +65,11 @@ function decreasePoints(name) {
 // Save data to Firebase
 function saveData(peopleData) {
     // Reference to the 'peopleData' node in the database
-    const db = getDatabase(app);
-    const peopleDataRef = ref(db, 'peopleData');
+    const db = firebase.database();
+    const peopleDataRef = db.ref('peopleData');
 
     // Set the data in the 'peopleData' node
-    set(peopleDataRef, peopleData)
+    peopleDataRef.set(peopleData)
         .then(() => {
             console.log('Data saved to Firebase!');
         })
@@ -76,15 +78,14 @@ function saveData(peopleData) {
         });
 }
 
-
 // Load data from Firebase
 function loadData() {
     // Reference to the 'peopleData' node in the database
-    const db = getDatabase(app);
-    const peopleDataRef = ref(db, 'peopleData');
+    const db = firebase.database();
+    const peopleDataRef = db.ref('peopleData');
 
     // Retrieve the data from the 'peopleData' node
-    get(peopleDataRef)
+    peopleDataRef.once('value')
         .then(snapshot => {
             // Check if there is data in the snapshot
             if (snapshot.exists()) {
@@ -92,6 +93,8 @@ function loadData() {
                 const data = snapshot.val();
                 console.log('Data loaded from Firebase:', data);
                 // Update your local peopleData array or perform any other actions with the data
+                peopleData = data;
+                render();
             } else {
                 console.log('No data found in Firebase.');
             }
@@ -100,7 +103,6 @@ function loadData() {
             console.error('Error loading data from Firebase:', error);
         });
 }
-
 
 // Call loadData() when the page loads to get existing data
 loadData();
