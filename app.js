@@ -35,7 +35,7 @@ function addPerson() {
             points: 0
         };
         peopleData.push(person);
-        saveData();
+        saveData(peopleData); // Pass the peopleData array to saveData
         render();
     }
 }
