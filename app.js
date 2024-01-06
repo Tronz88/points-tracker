@@ -59,7 +59,6 @@ function decreasePoints(name) {
 }
 
 // Save and load data functions
-import { getDatabase, ref, set } from 'firebase/database';
 
 // Save data to Firebase
 function saveData(peopleData) {
@@ -77,8 +76,6 @@ function saveData(peopleData) {
         });
 }
 
-
-import { getDatabase, ref, get } from 'firebase/database';
 
 // Load data from Firebase
 function loadData() {
